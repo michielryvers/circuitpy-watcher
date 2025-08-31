@@ -14,16 +14,18 @@ public sealed class LocalWatcher : IDisposable
 {
 	private readonly AppConfig _cfg;
 	private readonly WebWorkflowClient _client;
+	private readonly WriteCoordinator _wc;
 	private readonly FileSystemWatcher _fsw;
 	private readonly ConcurrentDictionary<string, System.Timers.Timer> _debouncers = new();
 	private readonly Channel<string> _queue = Channel.CreateUnbounded<string>();
 	private readonly ConcurrentDictionary<string, DateTime> _selfWrites = new();
 	private readonly TimeSpan _selfWriteWindow = TimeSpan.FromSeconds(2);
 
-	public LocalWatcher(AppConfig cfg, WebWorkflowClient client)
+	public LocalWatcher(AppConfig cfg, WebWorkflowClient client, WriteCoordinator wc)
 	{
 		_cfg = cfg;
 		_client = client;
+		_wc = wc;
 		_fsw = new FileSystemWatcher(cfg.LocalRoot)
 		{
 			IncludeSubdirectories = true,
@@ -130,7 +132,7 @@ public sealed class LocalWatcher : IDisposable
 		if (remoteEntry == null)
 		{
 			await EnsureRemoteDirsAsync(remoteFile, ct);
-			var status = await _client.PutFileAsync(remoteFile, await File.ReadAllBytesAsync(path, ct), new DateTimeOffset(localMTimeUtc), ct);
+			var status = await _wc.PutFileAsync(remoteFile, await File.ReadAllBytesAsync(path, ct), new DateTimeOffset(localMTimeUtc), ct);
 			Console.WriteLine($"PUSH  {rel} (reason: missing-remote) [{(int)status}]");
 			return;
 		}
@@ -142,7 +144,7 @@ public sealed class LocalWatcher : IDisposable
 		if (localMTimeUtc > remoteTime || localSize != remoteSize)
 		{
 			await EnsureRemoteDirsAsync(remoteFile, ct);
-			var status = await _client.PutFileAsync(remoteFile, await File.ReadAllBytesAsync(path, ct), new DateTimeOffset(localMTimeUtc), ct);
+			var status = await _wc.PutFileAsync(remoteFile, await File.ReadAllBytesAsync(path, ct), new DateTimeOffset(localMTimeUtc), ct);
 			Console.WriteLine($"PUSH  {rel} (reason: local-newer|size-diff) [{(int)status}]");
 		}
 		else if (remoteTime > localMTimeUtc)
@@ -178,7 +180,7 @@ public sealed class LocalWatcher : IDisposable
 			? PathMapper.ToRemoteDirectoryPath(_cfg.LocalRoot, newPath)
 			: PathMapper.ToRemoteFilePath(_cfg.LocalRoot, newPath);
 
-		var status = await _client.MoveAsync(fromRemote, toRemote, isDir, CancellationToken.None);
+		var status = await _wc.MoveAsync(fromRemote, toRemote, isDir, CancellationToken.None);
 		if (status == HttpStatusCode.Created)
 		{
 			Console.WriteLine($"MOVE  {Rel(oldPath)} -> {Rel(newPath)} (reason: local-rename)");
@@ -189,8 +191,8 @@ public sealed class LocalWatcher : IDisposable
 		{
 			await EnsureRemoteDirsAsync(toRemote, CancellationToken.None);
 			var fi = new FileInfo(newPath);
-			await _client.PutFileAsync(toRemote, await File.ReadAllBytesAsync(newPath), new DateTimeOffset(fi.LastWriteTimeUtc), CancellationToken.None);
-			await _client.DeleteAsync(fromRemote, isDirectory: false, CancellationToken.None);
+			await _wc.PutFileAsync(toRemote, await File.ReadAllBytesAsync(newPath), new DateTimeOffset(fi.LastWriteTimeUtc), CancellationToken.None);
+			await _wc.DeleteAsync(fromRemote, isDirectory: false, CancellationToken.None);
 			Console.WriteLine($"MOVE  {Rel(oldPath)} -> {Rel(newPath)} (fallback PUT+DELETE)");
 		}
 		else
@@ -208,7 +210,7 @@ public sealed class LocalWatcher : IDisposable
 		for (int i = 0; i < parts.Length - 1; i++)
 		{
 			current += parts[i] + "/";
-			await _client.PutDirectoryAsync(current, timestamp: null, ct);
+			await _wc.PutDirectoryAsync(current, timestamp: null, ct);
 		}
 	}
 

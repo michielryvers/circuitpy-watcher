@@ -61,24 +61,24 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Ignore deletions from remote.
 
 8) Paused state on 409 (USB MSC)
-- [ ] When a write returns 409, enter paused state; queue subsequent writes.
-- [ ] Poll writability every 5s via `/cp/diskinfo.json` or directory GET `writable`.
-- [ ] On writable=true, resume and drain the queue in order.
+ - [x] When a write returns 409, enter paused state; queue subsequent writes.
+ - [x] Poll writability every 5s via `/cp/diskinfo.json` or directory GET `writable`.
+ - [x] On writable=true, resume and drain the queue in order.
 
 9) Error handling and exits
 - [x] Exit immediately on 401/403 at startup.
 - [ ] Apply Polly retry for transient faults everywhere else; auto-resume after failures.
 
 10) Logging
-- [ ] Implement the specified single-line action log format (PULL, PUSH, MOVE, SKIP, PAUSE, RESUME, ERROR) with reasons.
+ - [ ] Implement the specified single-line action log format (PULL, PUSH, MOVE, SKIP, PAUSE, RESUME, ERROR) with reasons. (Partial: PAUSE/RESUME messages present; others are printed ad-hoc.)
 
 11) CLI wiring
 - [x] Parse `--address` and `--password` (minimal CLI).
 - [x] Construct base URL and auth from inputs; validate with `/cp/version.json`.
 
 12) Smoke tests and manual validation
-- [ ] Add a small test harness or script to simulate API responses (optional).
-- [ ] Manual test: initial run with a device; verify full pull, local edit push, remote poll pull, pause/resume on 409.
+ - [ ] Add a small test harness or script to simulate API responses (optional).
+ - [ ] Manual test: initial run with a device; verify full pull, local edit push, remote poll pull, pause/resume on 409.
 
 13) Docs and guardrails
 - [ ] Update README with prerequisites, how to run, and safety notes (local folder deletion on startup).

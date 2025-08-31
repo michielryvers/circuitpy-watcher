@@ -66,7 +66,8 @@ await puller.RunAsync(CancellationToken.None);
 Console.WriteLine("Initial full pull completed.");
 
 // Start local watcher (sequential processing)
-using var watcherSvc = new LocalWatcher(cfg, client2);
+var wc = new WriteCoordinator(cfg, client2);
+using var watcherSvc = new LocalWatcher(cfg, client2, wc);
 var poller = new RemotePoller(cfg, client2);
 
 using var ctsMain = new CancellationTokenSource();
