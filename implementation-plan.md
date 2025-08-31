@@ -66,15 +66,15 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [ ] On writable=true, resume and drain the queue in order.
 
 9) Error handling and exits
-- [ ] Exit immediately on 401/403 at startup.
+- [x] Exit immediately on 401/403 at startup.
 - [ ] Apply Polly retry for transient faults everywhere else; auto-resume after failures.
 
 10) Logging
 - [ ] Implement the specified single-line action log format (PULL, PUSH, MOVE, SKIP, PAUSE, RESUME, ERROR) with reasons.
 
 11) CLI wiring
-- [ ] Parse `--address` and `--password` (minimal CLI).
-- [ ] Construct base URL and auth from inputs; validate with `/cp/version.json`.
+- [x] Parse `--address` and `--password` (minimal CLI).
+- [x] Construct base URL and auth from inputs; validate with `/cp/version.json`.
 
 12) Smoke tests and manual validation
 - [ ] Add a small test harness or script to simulate API responses (optional).
