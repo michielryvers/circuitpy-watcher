@@ -42,8 +42,8 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Surface typed results (status codes, payloads) and helpers to interpret common conditions (401/403/404/409).
 
 4) Path normalization and mapping
-- [ ] Implement utilities to map between local paths and remote `/fs` paths, ensuring directory trailing slash rules.
-- [ ] Implement ignore checks and symlink skipping.
+- [x] Implement utilities to map between local paths and remote `/fs` paths, ensuring directory trailing slash rules.
+- [x] Implement ignore checks and symlink skipping.
 
 5) Full pull (Device → Local)
 - [ ] Recursive directory listing and download using API; write files and set local mtime from `modified_ns`.
