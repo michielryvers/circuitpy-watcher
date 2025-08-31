@@ -33,8 +33,8 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Set up Directory.Build.props for C# language version and nullable enable.
 
 2) Domain contracts and constants
-- [ ] Create config model (address, password, local root path, poll intervals, debounce, etc.) consistent with watcher-flow.md.
-- [ ] Define constants for default ignores and API paths.
+- [x] Create config model (address, password, local root path, poll intervals, debounce, etc.) consistent with watcher-flow.md.
+- [x] Define constants for default ignores and API paths.
 
 3) HTTP client and API wrappers
 - [ ] Implement a thin API client for `/cp/version.json`, `/cp/diskinfo.json` (writability), `/fs/<dir>/` GET JSON, file GET, file PUT (with Expect and X-Timestamp), dir PUT, file/dir MOVE, file/dir DELETE (not used yet but useful), with proper Basic auth.
