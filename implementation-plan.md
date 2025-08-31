@@ -46,8 +46,8 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Implement ignore checks and symlink skipping.
 
 5) Full pull (Device → Local)
-- [ ] Recursive directory listing and download using API; write files and set local mtime from `modified_ns`.
-- [ ] Sequential (no concurrency) transfers; robust error handling and retries.
+- [x] Recursive directory listing and download using API; write files and set local mtime from `modified_ns`.
+- [x] Sequential (no concurrency) transfers; robust error handling and retries.
 
 6) Local watcher
 - [ ] Initialize file system watcher on `./CIRCUITPYTHON`.

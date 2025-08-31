@@ -1,5 +1,7 @@
 ﻿using Watcher.Config;
 using Watcher.Http;
+using Watcher.Sync;
+using System.IO;
 
 static int PrintUsage()
 {
@@ -46,4 +48,19 @@ if (!version.IsSuccess)
 }
 
 Console.WriteLine($"Connected to {version.Body?.Hostname ?? cfg.Address} (Web API v{version.Body?.WebApiVersion})");
+
+// Task 5: Full pull startup behavior - delete local folder then fresh pull
+if (Directory.Exists(cfg.LocalRoot))
+{
+	Console.WriteLine($"Deleting existing local mirror: {cfg.LocalRoot}");
+	Directory.Delete(cfg.LocalRoot, recursive: true);
+}
+
+Directory.CreateDirectory(cfg.LocalRoot);
+
+using var client2 = new WebWorkflowClient(cfg);
+var puller = new FullPuller(cfg, client2);
+await puller.RunAsync(CancellationToken.None);
+
+Console.WriteLine("Initial full pull completed.");
 return 0;

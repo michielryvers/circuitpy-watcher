@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("watcher")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e458af1675f6e59288b290da726103c4f9235602")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d4d2bddaded625e84dfe85734f492edd7e46173")]
 [assembly: System.Reflection.AssemblyProductAttribute("watcher")]
 [assembly: System.Reflection.AssemblyTitleAttribute("watcher")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
