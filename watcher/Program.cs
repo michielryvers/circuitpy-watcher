@@ -63,4 +63,10 @@ var puller = new FullPuller(cfg, client2);
 await puller.RunAsync(CancellationToken.None);
 
 Console.WriteLine("Initial full pull completed.");
+
+// Start local watcher (sequential processing)
+using var watcherSvc = new LocalWatcher(cfg, client2);
+Console.WriteLine("Watching for local changes. Press Ctrl+C to exit.");
+await watcherSvc.RunAsync(CancellationToken.None);
+
 return 0;

@@ -50,11 +50,11 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Sequential (no concurrency) transfers; robust error handling and retries.
 
 6) Local watcher
-- [ ] Initialize file system watcher on `./CIRCUITPYTHON`.
-- [ ] Debounce per path (500ms).
-- [ ] For each effective event, refresh remote metadata for the path/parent and decide action by timestamp+size (equal → no-op).
-- [ ] Implement PUSH logic (ensure dirs exist via PUT directory; then PUT file with Expect + X-Timestamp).
-- [ ] Implement MOVE attempt on rename; fallback to PUT new + DELETE old.
+- [x] Initialize file system watcher on `./CIRCUITPYTHON`.
+- [x] Debounce per path (500ms).
+- [x] For each effective event, refresh remote metadata for the path/parent and decide action by timestamp+size (equal → no-op).
+- [x] Implement PUSH logic (ensure dirs exist via PUT directory; then PUT file with Expect + X-Timestamp).
+- [x] Implement MOVE attempt on rename; fallback to PUT new + DELETE old.
 
 7) Remote polling (Device → Local)
 - [ ] Full-tree metadata poll every 120s; compare with local and pull newer remote files.
