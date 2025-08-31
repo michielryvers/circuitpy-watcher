@@ -45,7 +45,7 @@ public sealed class LocalWatcher : IDisposable
 	{
 		var path = e.FullPath;
 		if (IgnorePath(path)) return;
-		if (_selfWrites.TryGetValue(path, out var when) && DateTime.UtcNow - when < _selfWriteWindow)
+		if (SelfWriteRegistry.IsRecent(path))
 		{
 			// Suppress our own recent writes
 			return;
@@ -123,7 +123,7 @@ public sealed class LocalWatcher : IDisposable
 			remoteEntry = Array.Find(listing.Body.Files, f => string.Equals(f.Name, name, StringComparison.Ordinal));
 		}
 
-		var fi = new FileInfo(path);
+	var fi = new FileInfo(path);
 		var localMTimeUtc = fi.LastWriteTimeUtc;
 		var localSize = fi.Length;
 
@@ -153,7 +153,7 @@ public sealed class LocalWatcher : IDisposable
 				Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 				await File.WriteAllBytesAsync(path, resp.Body, ct);
 				FileTimes.SetFileMTimeFromNs(path, remoteEntry.ModifiedNs);
-				_selfWrites[path] = DateTime.UtcNow;
+				SelfWriteRegistry.Register(path);
 				Console.WriteLine($"PULL  {rel} (reason: remote-newer)");
 			}
 			else

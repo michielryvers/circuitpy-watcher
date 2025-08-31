@@ -2,6 +2,7 @@
 using Watcher.Http;
 using Watcher.Sync;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 static int PrintUsage()
 {
@@ -66,7 +67,19 @@ Console.WriteLine("Initial full pull completed.");
 
 // Start local watcher (sequential processing)
 using var watcherSvc = new LocalWatcher(cfg, client2);
-Console.WriteLine("Watching for local changes. Press Ctrl+C to exit.");
-await watcherSvc.RunAsync(CancellationToken.None);
+var poller = new RemotePoller(cfg, client2);
+
+using var ctsMain = new CancellationTokenSource();
+Console.CancelKeyPress += (s, e) => {
+	e.Cancel = true;
+	ctsMain.Cancel();
+};
+
+Console.WriteLine("Watching for local changes and polling remote. Press Ctrl+C to exit.");
+
+await Task.WhenAll(
+	watcherSvc.RunAsync(ctsMain.Token),
+	poller.RunAsync(ctsMain.Token)
+);
 
 return 0;

@@ -57,8 +57,8 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Implement MOVE attempt on rename; fallback to PUT new + DELETE old.
 
 7) Remote polling (Device → Local)
-- [ ] Full-tree metadata poll every 120s; compare with local and pull newer remote files.
-- [ ] Ignore deletions from remote.
+- [x] Full-tree metadata poll every 120s; compare with local and pull newer remote files.
+- [x] Ignore deletions from remote.
 
 8) Paused state on 409 (USB MSC)
 - [ ] When a write returns 409, enter paused state; queue subsequent writes.
