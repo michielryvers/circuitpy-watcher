@@ -37,9 +37,9 @@ We’re creating a console tool that mirrors a CircuitPython device’s filesyst
 - [x] Define constants for default ignores and API paths.
 
 3) HTTP client and API wrappers
-- [ ] Implement a thin API client for `/cp/version.json`, `/cp/diskinfo.json` (writability), `/fs/<dir>/` GET JSON, file GET, file PUT (with Expect and X-Timestamp), dir PUT, file/dir MOVE, file/dir DELETE (not used yet but useful), with proper Basic auth.
-- [ ] Integrate Polly retry policies for transient faults (3 attempts, exponential backoff).
-- [ ] Surface typed results (status codes, payloads) and helpers to interpret common conditions (401/403/404/409).
+- [x] Implement a thin API client for `/cp/version.json`, `/cp/diskinfo.json` (writability), `/fs/<dir>/` GET JSON, file GET, file PUT (with Expect and X-Timestamp), dir PUT, file/dir MOVE, file/dir DELETE (not used yet but useful), with proper Basic auth.
+- [x] Integrate Polly retry policies for transient faults (3 attempts, exponential backoff).
+- [x] Surface typed results (status codes, payloads) and helpers to interpret common conditions (401/403/404/409).
 
 4) Path normalization and mapping
 - [ ] Implement utilities to map between local paths and remote `/fs` paths, ensuring directory trailing slash rules.
