@@ -13,9 +13,14 @@ namespace Watcher.Http;
 public sealed class WebWorkflowClient : IDisposable
 {
     private readonly HttpClient _http;
-    private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web);
+    private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web)
+    {
+        TypeInfoResolver = AppJsonContext.Default,
+    };
     private readonly AsyncRetryPolicy<HttpResponseMessage> _retry;
     private readonly Uri _baseUri;
+
+    private readonly HttpMessageHandler? _handler; // for tests
 
     public WebWorkflowClient(AppConfig config)
     {
@@ -33,6 +38,38 @@ public sealed class WebWorkflowClient : IDisposable
         var baseStr = uri.AbsoluteUri.EndsWith("/") ? uri.AbsoluteUri : uri.AbsoluteUri + "/";
         _baseUri = new Uri(baseStr, UriKind.Absolute);
         _http = new HttpClient { BaseAddress = _baseUri };
+        var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($":{config.Password}"));
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Basic",
+            authValue
+        );
+
+        _retry = Policy
+            .Handle<HttpRequestException>()
+            .OrResult<HttpResponseMessage>(r => (int)r.StatusCode >= 500)
+            .WaitAndRetryAsync(
+                3,
+                attempt => TimeSpan.FromMilliseconds(500 * Math.Pow(2, attempt - 1))
+            );
+    }
+
+    // Test-only constructor to inject custom HttpMessageHandler
+    public WebWorkflowClient(AppConfig config, HttpMessageHandler handler)
+    {
+        config.Validate();
+        _handler = handler;
+        var addr = config.Address.Trim();
+        if (
+            !addr.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            && !addr.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            addr = "http://" + addr;
+        }
+        var uri = new Uri(addr, UriKind.Absolute);
+        var baseStr = uri.AbsoluteUri.EndsWith("/") ? uri.AbsoluteUri : uri.AbsoluteUri + "/";
+        _baseUri = new Uri(baseStr, UriKind.Absolute);
+        _http = new HttpClient(handler) { BaseAddress = _baseUri };
         var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($":{config.Password}"));
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
             "Basic",
@@ -255,7 +292,11 @@ public sealed class WebWorkflowClient : IDisposable
             return new ApiResult<T>(status, default, false, resp.ReasonPhrase);
         }
         await using var s = await resp.Content.ReadAsStreamAsync(ct);
-        var body = await JsonSerializer.DeserializeAsync<T>(s, _json, ct);
+        var ti = (System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>?)
+            AppJsonContext.Default.GetTypeInfo(typeof(T));
+        var body = ti is null
+            ? await JsonSerializer.DeserializeAsync<T>(s, _json, ct)
+            : await JsonSerializer.DeserializeAsync(s, ti, ct);
         return new ApiResult<T>(status, body, true);
     }
 }

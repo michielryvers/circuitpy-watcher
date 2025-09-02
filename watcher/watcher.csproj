@@ -5,9 +5,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(PublishAot)'=='true'">
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+    <DebuggerSupport>false</DebuggerSupport>
+    <EventSourceSupport>false</EventSourceSupport>
+    <StackTraceSupport>false</StackTraceSupport>
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <StripSymbols>true</StripSymbols>
+    <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
+    <IlcGenerateDebugInfo>false</IlcGenerateDebugInfo>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Polly" Version="8.6.3" />
-    <PackageReference Include="Spectre.Console" Version="0.49.1" />
+    <PackageReference Include="Spectre.Console" Version="0.50.0" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" PrivateAssets="all" />
   </ItemGroup>
 </Project>
